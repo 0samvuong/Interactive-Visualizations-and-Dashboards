@@ -1,11 +1,14 @@
 // On change to the dropdown, build the table
 // d3.selectAll("#selDataset").on("change", getData);
 
-function buildHozBar(){
-
+// html calling this function...
+function optionChanged(dropValue){
+    console.log(dropValue)
+    buildPlot(dropValue);
+    
 };
 
-function buildPlot() {
+function buildPlot(dropDownIdValue) {
     //load json data 
     d3.json("samples.json").then(function(data) {
         
@@ -21,7 +24,7 @@ function buildPlot() {
         var sampleSamples = data.samples;
 
         // get id of 1 sample as test
-        var sample940 = sampleSamples.filter(data => data.id == 940);
+        var sample940 = sampleSamples.filter(data => data.id == dropDownIdValue);
 
         // define the HOZ Bar plot data
         // NEEDED to flip the x and y values as it's horizontal - meaning x which usually is the independant value (OTU) is now the dependant value (value/count...)
@@ -52,4 +55,16 @@ function buildPlot() {
 
 };
 
-buildPlot();
+// creating dropdown menu function
+function createDropdown(){
+        d3.json("samples.json").then(function(data) {
+            // gets the list of sample ids then for each id in the list, create an option html tag with the id as the value and id
+            var sample_id_list = data.names;
+            sample_id_list.forEach(data => {
+                d3.select("#selDataset").append("option").text(data).property("value", data);
+        })
+
+    })       
+};
+createDropdown();
+buildPlot(940);
