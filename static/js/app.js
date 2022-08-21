@@ -26,6 +26,10 @@ function buildPlot(dropDownIdValue) {
         // get id of 1 sample as test
         var sample940 = sampleSamples.filter(data => data.id == dropDownIdValue);
 
+
+        // =====================================================================================
+        //                         Horizontal bar chart
+        //=======================================================================================
         // define the HOZ Bar plot data
         // NEEDED to flip the x and y values as it's horizontal - meaning x which usually is the independant value (OTU) is now the dependant value (value/count...)
         // need to also reverse the chart to match the picture...
@@ -34,6 +38,7 @@ function buildPlot(dropDownIdValue) {
             y: sample940[0].otu_ids.slice(0,10).map(data => `OTU ${data}`).reverse(),
             // y is OTU sample values ( it is in the same order as the id)
             x: sample940[0].sample_values.slice(0,10).reverse(),
+            text: sample940[0].otu_labels.slice(0,10).reverse(),
             type: "bar",
             orientation: "h",
         }];
@@ -41,15 +46,34 @@ function buildPlot(dropDownIdValue) {
         // define bar layout
         var hozBarLayout = {
 
-            title:"Fuck you",
+            title:"Operational Taxonomic Units (OTU) count in Navels",
             xaxis: { title: "Values/Count" },
             yaxis: { title: "OTU ID" }
         };
 
         Plotly.newPlot('bar', hozBarData, hozBarLayout)
 
+        // =====================================================================================
+        //                         bubble chart
+        //=======================================================================================
         console.log(sample940)
-    
+
+        var bubbleChartData = [{
+            x: sample940[0].otu_ids.slice(0,10).map(data => `OTU ${data}`).reverse(),
+            y: sample940[0].sample_values.slice(0,10).reverse(),
+            mode: "markers",
+            marker: {
+                size: sample940[0].sample_values.slice(0,10).reverse()
+            },
+        }];
+
+        // define bubble layout
+        var bubbleLayout = {
+            title: 'Marker Size',
+            showlegend: false,
+        };
+        Plotly.newPlot('bubble', bubbleChartData, bubbleLayout);
+
 
     });
 
