@@ -46,7 +46,7 @@ function buildPlot(dropDownIdValue) {
         // define bar layout
         var hozBarLayout = {
 
-            title:"Operational Taxonomic Units (OTU) count in Navels",
+            title:`Top 10 OTU count in Navel: Test Subject ${dropDownIdValue}`,
             xaxis: { title: "Values/Count" },
             yaxis: { title: "OTU ID" }
         };
@@ -59,24 +59,40 @@ function buildPlot(dropDownIdValue) {
         console.log(sample940)
 
         var bubbleChartData = [{
-            x: sample940[0].otu_ids.slice(0,10).map(data => `OTU ${data}`).reverse(),
-            y: sample940[0].sample_values.slice(0,10).reverse(),
+            x: sample940[0].otu_ids,
+            y: sample940[0].sample_values,
+            text: sample940[0].otu_labels,
             mode: "markers",
             marker: {
-                size: sample940[0].sample_values.slice(0,10).reverse()
+                size: sample940[0].sample_values,
+                color: sample940[0].otu_ids
             },
         }];
 
         // define bubble layout
         var bubbleLayout = {
-            title: 'Marker Size',
-            showlegend: false,
+            title:`All OTU counts in Navel: Test Subject ${dropDownIdValue}`
         };
         Plotly.newPlot('bubble', bubbleChartData, bubbleLayout);
 
 
-    });
+        // =====================================================================================
+        //                         Table METADATA info
+        //=======================================================================================
+        // VARAIBLES
+        // SELECT the meta data sample based on the sample ID from dropdown
+        var metadataSample = data.metadata.filter(data => data.id == dropDownIdValue)
+        // select the HTML class allocated to the metadata section
+        var metadataSection = d3.select("#sample-metadata");
 
+        // remove all existing demographic info text before filling it up again with the loop
+        metadataSection.selectAll("p").remove();
+
+        // loop through all of the key value pairs, making a new row in a table for each key/value
+        Object.entries(metadataSample[0]).forEach(([key, value]) => {
+            metadataSection.append("p").text(`${key}: ${value}`);
+        });                      
+    });
 };
 
 // creating dropdown menu function
@@ -90,5 +106,6 @@ function createDropdown(){
 
     })       
 };
+
 createDropdown();
 buildPlot(940);
